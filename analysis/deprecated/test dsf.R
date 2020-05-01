@@ -1,6 +1,6 @@
 library(tidyverse)
 imp.dens <- read_csv("builds/imputed.density.csv")
-imp.dens <- imp.dens %>% mutate(imp.dens = 10^log10density.median)
+imp.dens <- imp.dens %>% mutate(imp.dens = 10^log10.density.median)
 mod.dens <- read_csv("output/animal.density.km2.csv")
 mod.dens <- mod.dens %>% mutate(mod.dens = dens.est)
 

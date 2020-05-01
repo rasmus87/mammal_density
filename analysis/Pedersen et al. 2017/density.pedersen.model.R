@@ -67,7 +67,6 @@ write_csv(out, "output/animal.density.km2.csv")
 
 
 
-
 pantheria <- read_tsv("data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
 names(pantheria) <- make.names(names(pantheria))
 pantheria <- pantheria %>%
@@ -108,7 +107,7 @@ pantheria["log10_Mass"] <- log10(pantheria$X5.1_AdultBodyMass_g)
 pantheria["log10_Density"] <- log10(pantheria$X21.1_PopulationDensity_n.km2)
 
 
-ggplot(mam, aes(log10_Mass, log10(fit))) +
+ggplot(mam, aes(log10_Mass, log10dens.est)) +
   geom_point() +
   geom_point(data = pantheria, aes(log10_Mass, log10_Density), col = "red") 
 
@@ -117,7 +116,7 @@ ggplot(mam %>% filter(Genus.1.2 %in% c("Dendrolagus", "Macropus")), aes(log10_Ma
   geom_point(data = pantheria %>% filter(MSW05_Genus %in% c("Dendrolagus", "Macropus")), aes(log10_Mass, log10_Density, col = MSW05_Genus)) 
 
 
-ggplot(mam, aes(log10_Mass, (fit))) +
+ggplot(mam, aes(log10_Mass, dens.est)) +
   geom_point() +
   geom_point(data = pantheria, aes(log10_Mass, X21.1_PopulationDensity_n.km2), col = "red") +
   scale_y_continuous(limits = c(0, 5000))

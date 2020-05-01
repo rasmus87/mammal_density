@@ -84,12 +84,6 @@ ggplot(mam.dens, aes(x = log10BM, col = Order.1.2)) +
 
 col9 <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
           "#ff7f00", "#cab2d6")
-# col9 <- c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", 
-#           "#f781bf", "#999999")
-# reduced.spectral <- c("#9E0142", "#D53E4F", "#F46D43", "#FDAE61", "#FEE08B", "#E6F598", "#66C2A5","#3288BD", "#5E4FA2")
-# col9 <- reduced.spectral
-# paired.modified.shuffled <- c("#A6CEE3", "#1F78B4", "#6A3D9A", "#E31A1C", "#B15928", "#FF7F00", "yellow" , "#B2DF8A", "#33A02C")
-# col9 <- paired.modified.shuffled
 col27 <- rep(col9, each = 3)
 pch3 <- c(1, 2, 3)
 pch27 <- rep(pch3, times = 9)
@@ -101,9 +95,9 @@ ggplot(mam.dens, aes(x = log10BM, col = Order.1.2, shape = Order.1.2)) +
   ylab(expression(log[10]~Density~(km^2))) +
   scale_color_manual(values = col27) +
   scale_shape_manual(values = pch27) +
-  theme(legend.position = c(1, 1), legend.background = element_rect(linetype="solid", colour = "black"),
+  theme(legend.position = c(1, 1), legend.background = element_rect(linetype = "solid", colour = "black"),
         legend.justification = c(1,1)) +
-  guides(col=guide_legend(nrow=9)) +
+  guides(col = guide_legend(nrow = 9)) +
   ylim(NA, 5.25) +
   xlim(NA, 7.5)
 ggsave("figures/dens_plot.png", width = 25.6, height = 14.4, units = "cm")
