@@ -27,7 +27,8 @@ right <- ggplot(sol, aes(x = value, col = chain)) +
   facet_wrap(~ variable, scales = "free", nrow = 2) +
   theme(legend.position="none") + 
   labs(x = "", y = "")
-grid.arrange(left, right, nrow = 1)
+p.main <- grid.arrange(left, right, nrow = 1)
+ggsave("output/appendix1_fig4.png", p.main)
 
 VCV <- bind_rows(as.data.frame(chain.1$VCV), 
                  as.data.frame(chain.2$VCV), 
@@ -47,7 +48,8 @@ right <- ggplot(VCV, aes(x = value, col = chain)) +
   facet_wrap(~ variable, scales = "free", nrow = 2) +
   theme(legend.position="none") + 
   labs(x = "", y = "")
-grid.arrange(left, right, nrow = 1)
+p.random <- grid.arrange(left, right, nrow = 1)
+ggsave("output/appendix1_fig5.png", p.random)
 
 # Checking convergence for our fixed factors
 gelman.diag(mcmc.list(chain.1$Sol[, 1:2], chain.2$Sol[, 1:2], chain.3$Sol[, 1:2]), autoburnin = FALSE)
