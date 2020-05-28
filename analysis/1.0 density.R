@@ -23,7 +23,9 @@ n.trees <- 1
 # n.trees <- 6*10
 # n.trees <- 1000
 # Number of mcmc samples per (1000 trees)
-mcmc.samples <- 3
+# Run 333 for good chains for testing convergence
+# Run 3 samples for actual data is enough
+mcmc.samples <- 333
 
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))

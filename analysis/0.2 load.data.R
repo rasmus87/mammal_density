@@ -1,7 +1,12 @@
 library(tidyverse)
 library(ape)
 
+pantheria0 <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.fixed.txt", col_types = cols())
+
 pantheria <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
+
+all.equal(pantheria0, pantheria)
+
 names(pantheria) <- make.names(names(pantheria))
 pantheria <- pantheria %>% 
   filter(!is.na(X21.1_PopulationDensity_n.km2)) %>% 
@@ -80,12 +85,14 @@ pantheria <- pantheria %>%
   mutate(dataset = "density")
 write_csv(pantheria, "builds/imputation_dataset.csv")
 
+pantheria <- as.data.frame(pantheria)
 
 mam <- mam %>% 
   filter(Binomial.1.2 %in% terrestrial) %>% 
   mutate(log10BM = log10(Mass.g), log10density = NA)
 mam <- mam %>% mutate(dataset = "mam")
 mam <- mam %>% select(names(pantheria))
+mam <- as.data.frame(mam) # Very important for MCMCglmm
 
 n.mam <- nrow(mam)
 
