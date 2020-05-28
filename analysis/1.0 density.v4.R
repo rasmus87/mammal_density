@@ -22,6 +22,7 @@ n.trees <- 1
 # n.trees <- 6
 # n.trees <- 6*10
 # n.trees <- 1000
+mcmc.samples <- 3
 
 pantheria <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
 names(pantheria) <- make.names(names(pantheria))
@@ -104,7 +105,7 @@ pantheria %>% nrow
 pantheria$Order.1.2 %>% unique %>% length
 pantheria$Family.1.2 %>% unique %>% length
 
-write_csv(pantheria, "builds/imputation_dataset.phylacine.csv")
+write_csv(pantheria, "builds/imputation_dataset.csv")
 pantheria <- as.data.frame(pantheria)
 
 # Linear model:
@@ -127,10 +128,9 @@ forest <- lapply(forest, drop.tip, tip = drop.species)
 
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
-samples <- 333
 thin <- 75
 burnin <- thin * 10
-nitt <- samples * thin + burnin
+nitt <- mcmc.samples * thin + burnin
 i = 1
 mcmc.regression <- function(i) {
   tree <- forest[[i]]
@@ -175,7 +175,7 @@ mcmc.regression <- function(i) {
                                  rowMeans(chain.2$Sol[, random.effects]),
                                  rowMeans(chain.3$Sol[, random.effects]))
   solution["tree"] <- i
-  solution["chain"] <- as.numeric(gl(3, samples))
+  solution["chain"] <- as.numeric(gl(3, mcmc.samples))
   
   return(list(solution, post.pred))
 }
@@ -224,6 +224,6 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_data_frame(imputed[[1]]), "builds/333_densities_fit.solution.csv")
-write_csv(as_data_frame(imputed[[2]]), "builds/333_densities_post.pred.csv")
-write_csv(as_data_frame(imputed[[2]]) %>% sample_n(10000), "builds/333_densities_post.pred.10k.sample.csv")
+write_csv(as_data_frame(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
+write_csv(as_data_frame(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
+write_csv(as_data_frame(imputed[[2]]) %>% sample_n(10000), paste0("builds/", mcmc.samples ,"_densities_post.pred.10k.sample.csv"))
