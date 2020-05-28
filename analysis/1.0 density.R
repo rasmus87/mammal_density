@@ -22,6 +22,7 @@ n.trees <- 1
 # n.trees <- 6
 # n.trees <- 6*10
 # n.trees <- 1000
+# Number of mcmc samples per (1000 trees)
 mcmc.samples <- 3
 
 pantheria <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
@@ -226,4 +227,4 @@ gc()
 
 write_csv(as_data_frame(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
 write_csv(as_data_frame(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
-write_csv(as_data_frame(imputed[[2]]) %>% sample_n(10000), paste0("builds/", mcmc.samples ,"_densities_post.pred.10k.sample.csv"))
+write_csv(as_data_frame(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
