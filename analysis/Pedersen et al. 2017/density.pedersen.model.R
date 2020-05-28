@@ -3,7 +3,7 @@
 library(tidyverse)
 
 family.groups <- read_csv("data/ancestor.tree.DNA.WR05.csv", col_types = cols())
-mam <- read_csv("../PHYLACINE_1.1/Data/Traits/Trait_data.csv", col_types = cols())
+mam <- read_csv("../PHYLACINE_1.2_dev/PHYLACINE_1.2.latest/Data/Traits/Trait_data.csv", col_types = cols())
 mam <- mam %>%
   # Order Cetacea (Whales s.l.)
   filter(!Family.1.2 %in% c("Balaenidae", "Balaenopteridae", "Delphinidae",
@@ -66,7 +66,6 @@ out <- mam %>% select(Binomial.1.2,
 write_csv(out, "output/animal.density.km2.csv")
 
 
-
 pantheria <- read_tsv("data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
 names(pantheria) <- make.names(names(pantheria))
 pantheria <- pantheria %>%
@@ -111,7 +110,7 @@ ggplot(mam, aes(log10_Mass, log10dens.est)) +
   geom_point() +
   geom_point(data = pantheria, aes(log10_Mass, log10_Density), col = "red") 
 
-ggplot(mam %>% filter(Genus.1.2 %in% c("Dendrolagus", "Macropus")), aes(log10_Mass, log10(fit), col = Genus.1.2)) +
+ggplot(mam %>% filter(Genus.1.2 %in% c("Dendrolagus", "Macropus")), aes(log10_Mass, log10dens.est, col = Genus.1.2)) +
   geom_line() +
   geom_point(data = pantheria %>% filter(MSW05_Genus %in% c("Dendrolagus", "Macropus")), aes(log10_Mass, log10_Density, col = MSW05_Genus)) 
 
