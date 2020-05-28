@@ -1,11 +1,7 @@
 library(tidyverse)
 library(ape)
 
-pantheria0 <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.fixed.txt", col_types = cols())
-
-pantheria <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
-
-all.equal(pantheria0, pantheria)
+pantheria <- read_tsv("data/PanTHERIA_1-0_WR05_Aug2008.txt") %>% na_if(-999)
 
 names(pantheria) <- make.names(names(pantheria))
 pantheria <- pantheria %>% 
