@@ -1,3 +1,6 @@
+# Density estimate:
+# Loads Pantheria density data following WR05
+
 library(tidyverse)
 library(MCMCglmm)
 library(ape)
@@ -28,7 +31,7 @@ pantheria <- pantheria %>%
             density = X21.1_PopulationDensity_n.km2,
             source = "PanTHERIA.2008")
 # Load taxonomy solver
-syn <- read_csv("../PHYLACINE_1.1/Data/Taxonomy/Synonymy_table_with_unaccepted_species.csv", col_types = cols(), guess_max = 5000)
+syn <- read_csv("../PHYLACINE_1.2/Data/Taxonomy/Synonymy_table_with_unaccepted_species.csv", col_types = cols(), guess_max = 5000)
 syn <- syn %>% 
   transmute(Binomial.1.2,
             Binomial.EltonTraits.1.0 = paste(EltonTraits.1.0.Genus, EltonTraits.1.0.Species, sep = "_"),
@@ -36,7 +39,7 @@ syn <- syn %>%
             Binomial.1.1 = paste(Genus.1.1, Species.1.0, sep = "_")) %>% 
   filter(!str_detect(Binomial.1.2, "000"))
 
-mam <- read_csv("../PHYLACINE_1.1/Data/Traits/Trait_data.csv", col_types = cols())
+mam <- read_csv("../PHYLACINE_1.2/Data/Traits/Trait_data.csv", col_types = cols())
 
 syn <- syn %>% 
   gather(System, Binomial, -Binomial.1.2) %>% 
@@ -100,7 +103,8 @@ pantheria <- pantheria %>%
 pantheria %>% nrow
 pantheria$Order.1.2 %>% unique %>% length
 pantheria$Family.1.2 %>% unique %>% length
-write_csv(pantheria, "builds/imputation_dataset.csv")
+
+write_csv(pantheria, "builds/imputation_dataset.phylacine.csv")
 pantheria <- as.data.frame(pantheria)
 
 # Linear model:
@@ -116,7 +120,7 @@ n.mam <- nrow(mam)
 df <- rbind(mam, pantheria)
 df <- as.data.frame(df)
 
-forest <- readRDS("../metabolic_rate/builds/forest.rds")
+forest <- readRDS("builds/forest.rds")
 species <- forest[[1]]$tip.label
 drop.species <- species[!species %in% terrestrial]
 forest <- lapply(forest, drop.tip, tip = drop.species)
@@ -156,9 +160,9 @@ mcmc.regression <- function(i) {
   }
   
   gc()
-  pred1 <- MCMC.predict.v3(chain.1, df)
-  pred2 <- MCMC.predict.v3(chain.2, df)
-  pred3 <- MCMC.predict.v3(chain.3, df)
+  pred1 <- MCMC.predict(chain.1, df)
+  pred2 <- MCMC.predict(chain.2, df)
+  pred3 <- MCMC.predict(chain.3, df)
 
   post.pred <- rbind(pred1, pred2, pred3)
   
@@ -176,7 +180,7 @@ mcmc.regression <- function(i) {
   return(list(solution, post.pred))
 }
 
-MCMC.predict.v3 <- function(object, newdata) {
+MCMC.predict <- function(object, newdata) {
   object2 <- MCMCglmm(fixed=object$Fixed$formula, 
                       random=object$Random$formula, 
                       rcov=object$Residual$formula, 

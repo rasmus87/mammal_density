@@ -77,15 +77,15 @@ Crocidura_hildegardeae,Eulipotyphla,Soricidae,2.5406047327471906,0.9777236052888
 Crocidura_hirta,Eulipotyphla,Soricidae,1.644635503768153,1.1986570869544226,density
 Crocidura_russula,Eulipotyphla,Soricidae,3.9469432706978256,1.0606978403536116,density
 Crocidura_suaveolens,Eulipotyphla,Soricidae,3.7436398767956383,0.7160033436347992,density
-Equus_zebra,Perissodactyla,Equidae,0.12057393120584989,5.457879929541988,density
+Equus_zebra,Perissodactyla,Equidae,0.12057393120584989,5.380211241711606,density
 Eremitalpa_granti,Afrosoricida,Chrysochloridae,1.570659670021534,1.416640507338281,density
 Erethizon_dorsatum,Rodentia,Erethizontidae,0.5428254269591799,3.850358243515907,density
 Erinaceus_europaeus,Eulipotyphla,Erinaceidae,2.089905111439398,2.8870543780509568,density
 Erythrocebus_patas,Primates,Cercopithecidae,-0.585026652029182,3.9079485216122722,density
-Equus_africanus,Perissodactyla,Equidae,0.48572142648158,5.511883360978874,density
-Equus_quagga,Perissodactyla,Equidae,0.8450980400142568,5.440909082065217,density
-Equus_grevyi,Perissodactyla,Equidae,0.35602585719312274,5.610659950200376,density
-Equus_hemionus,Perissodactyla,Equidae,-0.16115090926274472,5.361727836017593,density
+Equus_africanus,Perissodactyla,Equidae,0.48572142648158,5.439332693830263,density
+Equus_quagga,Perissodactyla,Equidae,0.8450980400142568,5.243038048686294,density
+Equus_grevyi,Perissodactyla,Equidae,0.35602585719312274,5.544068044350276,density
+Equus_hemionus,Perissodactyla,Equidae,-0.16115090926274472,5.301029995663981,density
 Genetta_genetta,Carnivora,Viverridae,0.2741578492636798,3.255272505103306,density
 Dendrohyrax_arboreus,Hyracoidea,Procaviidae,1.3554515201265174,3.469822015978163,density
 Dendrolagus_bennettianus,Diprotodontia,Macropodidae,1.4374334437979712,4.039414119176137,density
@@ -112,7 +112,7 @@ Didelphis_aurita,Didelphimorphia,Didelphidae,1.655330558009341,3.06595298031387,
 Didelphis_marsupialis,Didelphimorphia,Didelphidae,1.8481891169913987,3.037904357312404,density
 Didelphis_virginiana,Didelphimorphia,Didelphidae,1.2571984261393445,3.3415334414404065,density
 Elephantulus_rufescens,Macroscelidea,Macroscelididae,2.3010299956639813,1.5740312677277188,density
-Elephas_maximus,Proboscidea,Elephantidae,-0.27572413039921095,6.464644518498151,density
+Elephas_maximus,Proboscidea,Elephantidae,-0.27572413039921095,6.4996870826184034,density
 Eliomys_quercinus,Rodentia,Gliridae,2.1700562572508,2.060697840353612,density
 Heterocephalus_glaber,Rodentia,Bathyergidae,4.045322978786658,1.7403626894942439,density
 Heterohyrax_brucei,Hyracoidea,Procaviidae,3.7598166122725254,3.4191293077419758,density
@@ -274,7 +274,7 @@ Hippotragus_equinus,Cetartiodactyla,Bovidae,-0.017728766960431602,5.431360064597
 Hippotragus_niger,Cetartiodactyla,Bovidae,0.11394335230683679,5.356980064700362,density
 Parahyaena_brunnea,Carnivora,Hyaenidae,-2,4.507859917898863,density
 Hybomys_trivirgatus,Rodentia,Muridae,1.9063350418050906,1.7551122663950711,density
-Hydrochoerus_hydrochaeris,Rodentia,Caviidae,2.098089690363952,4.7955296609911935,density
+Hydrochoerus_hydrochaeris,Rodentia,Caviidae,2.098089690363952,4.698970004336019,density
 Hyemoschus_aquaticus,Cetartiodactyla,Tragulidae,1.2000292665537702,4.035429738184549,density
 Hylobates_agilis,Primates,Hylobatidae,1.0692980121155293,3.7520484478194387,density
 Hylobates_klossii,Primates,Hylobatidae,1.2206310194480923,3.7634279935629373,density
@@ -358,7 +358,7 @@ Lophocebus_albigena,Primates,Cercopithecidae,1.1720188094245565,3.84415397521184
 Lophuromys_flavopunctatus,Rodentia,Muridae,2.922169911546005,1.7781512503836436,density
 Lophuromys_sikapusi,Rodentia,Muridae,2.3283796034387376,1.8698182079793282,density
 Loris_tardigradus,Primates,Lorisidae,1.8590782247469695,2.3573630306151427,density
-Loxodonta_africana,Proboscidea,Elephantidae,0.8273692730538252,6.595500002596104,density
+Loxodonta_africana,Proboscidea,Elephantidae,0.8273692730538252,6.643452676486188,density
 Loxodontomys_micropus,Rodentia,Cricetidae,2.3572485769362874,1.861534410859038,density
 Lutra_lutra,Carnivora,Mustelidae,-0.07058107428570728,3.94374670939432,density
 Lutrogale_perspicillata,Carnivora,Mustelidae,0.6454222693490919,3.976959489490355,density
