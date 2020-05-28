@@ -25,7 +25,7 @@ n.trees <- 1
 # Number of mcmc samples per (1000 trees)
 # Run 333 for good chains for testing convergence
 # Run 3 samples for actual data is enough
-mcmc.samples <- 333
+mcmc.samples <- 3
 
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
@@ -54,7 +54,7 @@ mcmc.regression <- function(i) {
                       data = pantheria, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
-  if(i == 1) {
+  if(i == 1 & mcmc.samples == 333) {
     saveRDS(chain.1, paste0("builds/mcmcglmms/tree", i, ".chain1.rds"), compress = FALSE)
     saveRDS(chain.2, paste0("builds/mcmcglmms/tree", i, ".chain2.rds"), compress = FALSE)
     saveRDS(chain.3, paste0("builds/mcmcglmms/tree", i, ".chain3.rds"), compress = FALSE)
@@ -127,4 +127,4 @@ gc()
 
 write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
 write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
-write_csv(as_tibble(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
+# write_csv(as_tibble(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
