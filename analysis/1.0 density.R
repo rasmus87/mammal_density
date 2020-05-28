@@ -1,7 +1,3 @@
-# Density estimate:
-# Loads Pantheria density data following WR05
-# Outputs a predicted estimate of densities
-
 library(tidyverse)
 library(MCMCglmm)
 library(ape)
@@ -9,6 +5,9 @@ library(doSNOW)
 library(gridExtra)
 library(tictoc)
 
+# Run after data is loaded with "0.2 load.data.R"
+
+# For 333 samples:
 # 36 hours runtime for 1000 trees on 20 cores
 # ~ 80 GB RAM required
 # ~ 80 GB disk space
@@ -25,26 +24,6 @@ n.trees <- 1
 # n.trees <- 1000
 # Number of mcmc samples per (1000 trees)
 mcmc.samples <- 3
-
-
-
-# Linear model:
-mam <- mam %>% 
-  filter(Binomial.1.2 %in% terrestrial) %>% 
-  mutate(log10BM = log10(Mass.g), log10density = NA)
-mam <- mam %>% mutate(dataset = "mam")
-mam <- mam %>% select(names(pantheria))
-mam <- as.data.frame(mam)
-
-n.mam <- nrow(mam)
-
-df <- rbind(mam, pantheria)
-df <- as.data.frame(df)
-
-forest <- readRDS("builds/forest.rds")
-species <- forest[[1]]$tip.label
-drop.species <- species[!species %in% terrestrial]
-forest <- lapply(forest, drop.tip, tip = drop.species)
 
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
@@ -144,6 +123,6 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_data_frame(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
-write_csv(as_data_frame(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
-write_csv(as_data_frame(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
+write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
+write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
+write_csv(as_tibble(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))

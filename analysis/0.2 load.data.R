@@ -1,4 +1,5 @@
 library(tidyverse)
+library(ape)
 
 pantheria <- read_tsv("../metabolic_rate/data/PanTHERIA_1-0_WR05_Aug2008.txt", col_types = cols())
 names(pantheria) <- make.names(names(pantheria))
@@ -34,9 +35,9 @@ anti_join(pantheria, syn, by = c("Binomial.Pantheria" = "Binomial"))
 # Cebus_olivaceus is split into two species:
 # Cebus brunneus and Cebus kaapori - pick a random
 
-extra <- data_frame(Binomial.1.2 = c("Cercopithecus_denti", "Cebus_brunneus"), 
-                    System = "Personal.judgement", 
-                    Binomial = c("Cercopithecus_pogonias", "Cebus_olivaceus"))
+extra <- tibble(Binomial.1.2 = c("Cercopithecus_denti", "Cebus_brunneus"), 
+                System = "Personal.judgement", 
+                Binomial = c("Cercopithecus_pogonias", "Cebus_olivaceus"))
 syn <- syn %>% bind_rows(extra)
 stopifnot(!anti_join(pantheria, syn, by = c("Binomial.Pantheria" = "Binomial")) %>% nrow)
 
@@ -77,9 +78,21 @@ pantheria <- pantheria %>%
   filter(Binomial.1.2 %in% terrestrial) %>% 
   select(-source) %>% 
   mutate(dataset = "density")
-pantheria %>% nrow
-pantheria$Order.1.2 %>% unique %>% length
-pantheria$Family.1.2 %>% unique %>% length
-
 write_csv(pantheria, "builds/imputation_dataset.csv")
-pantheria <- as.data.frame(pantheria)
+
+
+mam <- mam %>% 
+  filter(Binomial.1.2 %in% terrestrial) %>% 
+  mutate(log10BM = log10(Mass.g), log10density = NA)
+mam <- mam %>% mutate(dataset = "mam")
+mam <- mam %>% select(names(pantheria))
+
+n.mam <- nrow(mam)
+
+df <- rbind(mam, pantheria)
+df <- as.data.frame(df)
+
+forest <- readRDS("builds/forest.rds")
+species <- forest[[1]]$tip.label
+drop.species <- species[!species %in% terrestrial]
+forest <- lapply(forest, drop.tip, tip = drop.species)
