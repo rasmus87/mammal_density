@@ -1,14 +1,11 @@
 library(tidyverse)
 
 dataset <- read_csv("builds/imputation_dataset.csv")
-
-# imputed <- read_csv("builds/333_densities_post.pred.10k.sample.csv")
-# imputed <- read_csv("builds/33_densities_post.pred.10k.sample.csv")
 imputed <- read_csv("builds/3_densities_post.pred.csv")
 
 dens <- imputed %>% gather("Binomial.1.2", "log10density")
 
-mam <- read_csv("../PHYLACINE_1.1/Data/Traits/Trait_data.csv", col_types = cols())
+mam <- read_csv("../PHYLACINE_1.2/Data/Traits/Trait_data.csv", col_types = cols())
 
 bat.order <- "Chiroptera"
 sea.cow.order <- "Sirenia"
@@ -45,7 +42,7 @@ ggplot(test, aes()) +
   geom_density(aes(log10.upper.95hpd, col = "95 % HPD")) +
   geom_density(aes(q.025, col = "95 % Quantile")) +
   geom_density(aes(q.975, col = "95 % Quantile"))
-  
+# Basically the same thing!  
   
 
 dens.summary <- dens %>%
@@ -58,23 +55,16 @@ dens.summary <- dens %>%
 mam.dens <- mam %>% 
   transmute(Binomial.1.2, Order.1.2, Family.1.2, log10BM = log10(Mass.g)) %>% 
   left_join(dens.summary, by = "Binomial.1.2")
-mam.dens <- mam.dens %>% mutate(density.median= 10^log10.density.median,
+mam.dens <- mam.dens %>% mutate(density.median = 10^log10.density.median,
                                 density.mean = 10^log10.density.mean,
                                 lower.95hpd = 10^log10.lower.95hpd,
                                 upper.95hpd = 10^log10.upper.95hpd)
 
-# write_csv(mam.dens, "builds/imputed.density_333.csv")
-# write_csv(mam.dens, "builds/imputed.density_33.csv")
-write_csv(mam.dens, "builds/imputed.density.csv")
-mam.dens <- read_csv("builds/imputed.density.csv")
+write_csv(mam.dens, "output/Table S4 Imputed density.csv")
 
 
-
-
-
-
-
-
+# Build supplementary figures demonstrating test of the imputed result
+mam.dens <- read_csv("output/Table S4 Imputed density.csv")
 ggplot(mam.dens, aes(x = log10BM, col = Order.1.2)) +
   geom_linerange(aes(ymin = log10.lower.95hpd, ymax = log10.upper.95hpd)) +
   geom_point(aes(y = log10.density.mean)) +
@@ -98,9 +88,9 @@ ggplot(mam.dens, aes(x = log10BM, col = Order.1.2, shape = Order.1.2)) +
   theme(legend.position = c(1, 1), legend.background = element_rect(linetype = "solid", colour = "black"),
         legend.justification = c(1,1)) +
   guides(col = guide_legend(nrow = 9)) +
-  ylim(NA, 5.25) +
+  ylim(NA, 4.25) +
   xlim(NA, 7.5)
-ggsave("figures/dens_plot.png", width = 25.6, height = 14.4, units = "cm")
+ggsave("output/appendix1_fig1.png", width = 25.6, height = 18, units = "cm")
 
 
 ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2)) +
@@ -110,7 +100,7 @@ ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2))
   ylab(expression(log[10]~Density~(km^-2))) +
   scale_color_brewer(palette = "Set2") +
   theme(legend.position = "none")
-ggsave("output/appendix1_fig1.png")
+ggsave("output/appendix1_fig2.png", width = 25.6, height = 14.4, units = "cm")
 
 full.data <- dataset %>%
   transmute(Binomial.1.2, log10.density.pantheria = log10density) %>% 
@@ -125,9 +115,9 @@ ggplot(full.data, aes(x = log10.density.pantheria, y = log10.density.median, col
   ylab(expression(log[10]~Imputed~median~density~(km^-2))) +
   scale_color_continuous(expression(log[10]~Body~mass~(g))) +
   coord_equal(xlim = c(-2, 5), ylim = c(-2, 5))
-ggsave("output/appendix1_fig2.png")
+ggsave("output/appendix1_fig3.png", width = 25.6, height = 14.4, units = "cm")
 
-ggplot(full.data, aes(x = log10BM, y = log10.density.median-log10.density.pantheria, 
+ggplot(full.data, aes(x = log10BM, y = log10.density.median - log10.density.pantheria, 
                       col = Order.1.2, shape = Order.1.2)) +
   geom_point() +
   geom_abline(slope = 0, lty = 2, lwd = .7) +
@@ -137,32 +127,32 @@ ggplot(full.data, aes(x = log10BM, y = log10.density.median-log10.density.panthe
   ylab(expression(log[10]~Density~difference~(km^-2))) +
   scale_color_manual(values = col27) +
   scale_shape_manual(values = pch27)
-ggsave("output/appendix1_fig3.png")
+ggsave("output/appendix1_fig4.png", width = 25.6, height = 14.4, units = "cm")
 
-#### TESTS ####
-test <- as.matrix(imputed)[,1]
-exp((log(10) * sd(test))^2/2) * 10^mean(test)
-mean(10^test)
-
-test.mcmc <- test
-attr(test.mcmc, "class") <- "mcmc"
-10^coda::HPDinterval(test.mcmc)
-coda::HPDinterval(10^test.mcmc)
-
-10^quantile(test, c(.025, 0.975))
-quantile(10^test, c(.025, 0.975))
-
-ggplot(data_frame(), aes(x = 10^test)) +
-  geom_density() +
-  geom_vline(xintercept = 10^quantile(test, c(.025, 0.975)), lty = 2, col = "blue") +
-  geom_vline(xintercept = coda::HPDinterval(10^test.mcmc)[1:2], lty = 2, col = "red") +
-  geom_vline(xintercept = mean(10^test), lty = 1, col = "red", lwd = 1) +
-  geom_vline(xintercept = median(10^test), lty = 1, col = "blue", lwd = 1)
-
-  
-ggplot(data_frame(), aes(x = test)) +
-  geom_density() +
-  geom_vline(xintercept = quantile(test, c(.025, 0.975)), lty = 2, col = "blue") +
-  geom_vline(xintercept = coda::HPDinterval(test.mcmc)[1:2], lty = 2, col = "red") +
-  geom_vline(xintercept = mean(test), lty = 1, col = "red", lwd = 1) +
-  geom_vline(xintercept = median(test), lty = 1, col = "blue", lwd = 1)
+# #### TESTS ####
+# test <- as.matrix(imputed)[,1]
+# exp((log(10) * sd(test))^2/2) * 10^mean(test)
+# mean(10^test)
+# 
+# test.mcmc <- test
+# attr(test.mcmc, "class") <- "mcmc"
+# 10^coda::HPDinterval(test.mcmc)
+# coda::HPDinterval(10^test.mcmc)
+# 
+# 10^quantile(test, c(.025, 0.975))
+# quantile(10^test, c(.025, 0.975))
+# 
+# ggplot(data_frame(), aes(x = 10^test)) +
+#   geom_density() +
+#   geom_vline(xintercept = 10^quantile(test, c(.025, 0.975)), lty = 2, col = "blue") +
+#   geom_vline(xintercept = coda::HPDinterval(10^test.mcmc)[1:2], lty = 2, col = "red") +
+#   geom_vline(xintercept = mean(10^test), lty = 1, col = "red", lwd = 1) +
+#   geom_vline(xintercept = median(10^test), lty = 1, col = "blue", lwd = 1)
+# 
+#   
+# ggplot(data_frame(), aes(x = test)) +
+#   geom_density() +
+#   geom_vline(xintercept = quantile(test, c(.025, 0.975)), lty = 2, col = "blue") +
+#   geom_vline(xintercept = coda::HPDinterval(test.mcmc)[1:2], lty = 2, col = "red") +
+#   geom_vline(xintercept = mean(test), lty = 1, col = "red", lwd = 1) +
+#   geom_vline(xintercept = median(test), lty = 1, col = "blue", lwd = 1)
