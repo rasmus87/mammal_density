@@ -14,14 +14,14 @@ library(tictoc)
 
 ## Set options:
 # Set parralell cluster size
-cluster.size <- 1
-# cluster.size <- 6
+# cluster.size <- 1
+cluster.size <- 6
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
-n.trees <- 1
+# n.trees <- 1
 # n.trees <- 6
 # n.trees <- 6*10
-# n.trees <- 1000
+n.trees <- 1000
 # Number of mcmc samples per (1000 trees)
 # Run 333 for good chains for testing convergence
 # Run 3 samples for actual data is enough
