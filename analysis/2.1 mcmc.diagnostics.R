@@ -64,7 +64,7 @@ gelman.plot(mcmc.list(chain.1$VCV, chain.2$VCV, chain.3$VCV), autoburnin = FALSE
 gelman.plot(mcmc.list(chain.1$Sol[, 1:2], chain.2$Sol[, 1:2], chain.3$Sol[, 1:2]), autoburnin = FALSE)
 
 
-### Checking only the first chain
+### Checking effective sample size
 chain.1.2.3.Sol <- list(chain.1$Sol[, 1:2], chain.2$Sol[, 1:2], chain.3$Sol[, 1:2])
 chain.1.2.3.VCV <- list(chain.1$VCV, chain.2$VCV, chain.3$VCV)
 effectiveSize(chain.1.2.3.Sol)/3
