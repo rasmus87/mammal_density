@@ -55,9 +55,9 @@ mcmc.regression <- function(i) {
                       pr = TRUE,
                       verbose = FALSE)
   if(i == 1 & mcmc.samples == 333) {
-    saveRDS(chain.1, paste0("builds/mcmcglmms/tree", i, ".chain1.rds"), compress = FALSE)
-    saveRDS(chain.2, paste0("builds/mcmcglmms/tree", i, ".chain2.rds"), compress = FALSE)
-    saveRDS(chain.3, paste0("builds/mcmcglmms/tree", i, ".chain3.rds"), compress = FALSE)
+    saveRDS(chain.1, paste0("builds/mcmcglmms/tree", i, ".chain1.alt.rds"), compress = FALSE)
+    saveRDS(chain.2, paste0("builds/mcmcglmms/tree", i, ".chain2.alt.rds"), compress = FALSE)
+    saveRDS(chain.3, paste0("builds/mcmcglmms/tree", i, ".chain3.alt.rds"), compress = FALSE)
   }
   
   gc()
@@ -126,6 +126,5 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
-write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
-# write_csv(as_tibble(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
+write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.alt.csv"))
+write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.alt.csv"))
