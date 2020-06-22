@@ -8,6 +8,10 @@ chain.1 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain1.rds"))
 chain.2 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain2.rds"))
 chain.3 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain3.rds"))
 
+chain.1 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain1.alt.rds"))
+chain.2 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain2.alt.rds"))
+chain.3 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain3.alt.rds"))
+
 ### Checking 3 chains for tree 1
 sol <- bind_rows(as.data.frame(chain.1$Sol[, 1:2]), 
                  as.data.frame(chain.2$Sol[, 1:2]), 

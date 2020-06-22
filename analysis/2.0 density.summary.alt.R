@@ -1,8 +1,8 @@
 library(tidyverse)
 library(ggpmisc)
 
-dataset <- read_csv("builds/imputation_dataset.csv")
-imputed <- read_csv("builds/3_densities_post.pred.csv")
+dataset <- read_csv("builds/imputation_dataset_PanTetra.csv")
+imputed <- read_csv("builds/3_densities_post.pred.alt.csv")
 
 dens <- imputed %>% gather("Binomial.1.2", "log10density")
 
@@ -44,7 +44,7 @@ ggplot(test, aes()) +
   geom_density(aes(q.025, col = "95 % Quantile")) +
   geom_density(aes(q.975, col = "95 % Quantile"))
 # Basically the same thing!  
-  
+
 
 dens.summary <- dens %>%
   group_by(Binomial.1.2) %>% 
@@ -61,11 +61,13 @@ mam.dens <- mam.dens %>% mutate(density.median = 10^log10.density.median,
                                 lower.95hpd = 10^log10.lower.95hpd,
                                 upper.95hpd = 10^log10.upper.95hpd)
 
-write_csv(mam.dens, "output/Table S4 Imputed density.csv")
+write_csv(mam.dens, "output/Table S4 Imputed density - PanTetra.csv")
+
+
 
 
 # Build supplementary figures demonstrating test of the imputed result
-mam.dens <- read_csv("output/Table S4 Imputed density.csv")
+mam.dens <- read_csv("output/Table S4 Imputed density - PanTetra.csv")
 
 theme_R <- function() {
   theme_bw() %+replace% 
@@ -99,7 +101,7 @@ ggplot(mam.dens, aes(x = log10BM, col = Order.1.2, shape = Order.1.2)) +
         legend.justification = c(1,1)) +
   guides(col = guide_legend(nrow = 9)) +
   ylim(NA, 4.30)
-ggsave("output/appendix1_fig1.png", width = 25.6, height = 16.5, units = "cm")
+ggsave("output/appendix1_fig1.alt.png", width = 25.6, height = 16.5, units = "cm")
 
 ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2)) +
   geom_point(aes(y = log10.density.mean), pch = 19) +
@@ -114,7 +116,7 @@ ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2))
         legend.background = element_rect(linetype = "solid", colour = "black"),
         legend.justification = c(1.5, 1.5)) +
   ylim(NA, 4.30)
-ggsave("output/appendix1_fig2.png", width = 25.6, height = 16.5, units = "cm")
+ggsave("output/appendix1_fig2.alt.png", width = 25.6, height = 16.5, units = "cm")
 
 full.data <- dataset %>%
   transmute(Binomial.1.2, log10.density.pantheria = log10density) %>% 
@@ -133,7 +135,7 @@ ggplot(full.data %>% filter(!is.na(log10.density.pantheria)),
   stat_poly_eq(aes(label = paste(..eq.label.., ..adj.rr.label.., ..p.value.label.., sep = "*\' ,  \'*")), 
                label.x.npc = "left", label.y.npc = "top",
                formula = y ~ x, parse = TRUE, size = 3)
-ggsave("output/appendix1_fig3.png", width = 25.6, height = 14.4, units = "cm")
+ggsave("output/appendix1_fig3.alt.png", width = 25.6, height = 14.4, units = "cm")
 
 ggplot(full.data %>% filter(!is.na(log10.density.pantheria)), 
        aes(x = log10BM, y = log10.density.median - log10.density.pantheria, 
@@ -151,5 +153,5 @@ ggplot(full.data %>% filter(!is.na(log10.density.pantheria)),
                label.x.npc = "left", label.y.npc = "top",
                formula = y ~ x, parse = TRUE, size = 3) +
   guides(col = guide_legend(ncol = 1))
-ggsave("output/appendix1_fig4.png", width = 25.6, height = 14.4, units = "cm")
+ggsave("output/appendix1_fig4.alt.png", width = 25.6, height = 14.4, units = "cm")
 
