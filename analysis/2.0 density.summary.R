@@ -1,5 +1,6 @@
 library(tidyverse)
 library(ggpmisc)
+library(ggtext)
 
 dataset <- read_csv("builds/imputation_dataset.csv")
 imputed <- read_csv("builds/3_densities_post.pred.csv")
@@ -108,10 +109,9 @@ ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2))
   theme_R() +
   xlab(expression(log[10]~Body~mass~(g))) +
   ylab(expression(log[10]~Density~(km^-2))) +
-  scale_color_brewer(palette = "Set2", name = "Imputed density for species",
+  scale_color_brewer(palette = "Paired", name = "Imputed density for species",
                      labels = c("without known density",
                                 "with empirical known density")) +
-  theme(legend.position = "none") +
   theme(legend.position = c(1, 1), 
         legend.background = element_rect(linetype = "solid", colour = "black"),
         legend.justification = c(1.5, 1.5)) +
