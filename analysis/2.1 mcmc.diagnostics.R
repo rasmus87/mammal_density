@@ -2,15 +2,16 @@ library(tidyverse)
 library(gridExtra)
 library(coda)
 library(MCMCglmm)
+library(ggpmisc)
 
 i = 1
 chain.1 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain1.rds"))
 chain.2 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain2.rds"))
 chain.3 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain3.rds"))
-
-chain.1 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain1.alt.rds"))
-chain.2 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain2.alt.rds"))
-chain.3 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain3.alt.rds"))
+# 
+# chain.1 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain1.alt.rds"))
+# chain.2 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain2.alt.rds"))
+# chain.3 <- readRDS(paste0("builds/mcmcglmms/tree", i, ".chain3.alt.rds"))
 
 ### Checking 3 chains for tree 1
 sol <- bind_rows(as.data.frame(chain.1$Sol[, 1:2]), 
@@ -22,10 +23,13 @@ sol <- gather(sol, key = "variable", value = "value", -chain, -sample)
 
 left <- ggplot(sol, aes(x = sample, y = value, col = chain)) +
   geom_line() + 
-  geom_smooth(method = "lm", se = TRUE, lty = "dotted", col = "black") +
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, lty = "dotted", col = "black") +
   facet_wrap(~ variable, scales = "free", nrow = 2) +
   theme(legend.position="none") + 
-  ylab("")
+  ylab("") + 
+  stat_poly_eq(aes(label = ..adj.rr.label..), 
+               label.x.npc = "left", label.y.npc = "top",
+               formula = y ~ x, parse = TRUE, size = 3, vstep = 0, hstep = 0.15)
 right <- ggplot(sol, aes(x = value, col = chain)) +
   geom_density() +
   geom_rug() +
@@ -44,10 +48,13 @@ VCV <- gather(VCV, key = "variable", value = "value", -chain, -sample)
 
 left <- ggplot(VCV, aes(x = sample, y = value, col = chain)) +
   geom_line() + 
-  geom_smooth(method = "lm", se = TRUE, lty = "dotted", col = "black") +
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, lty = "dotted", col = "black") +
   facet_wrap(~ variable, scales = "free", nrow = 2) +
   theme(legend.position="none") + 
-  ylab("")
+  ylab("") + 
+  stat_poly_eq(aes(label = ..adj.rr.label..), 
+               label.x.npc = "left", label.y.npc = "top",
+               formula = y ~ x, parse = TRUE, size = 3, vstep = 0, hstep = 0.15)
 right <- ggplot(VCV, aes(x = value, col = chain)) +
   geom_density() +
   geom_rug() +

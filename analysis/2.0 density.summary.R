@@ -86,14 +86,16 @@ col27 <- rep(col9, each = 3)
 pch3 <- c(1, 2, 3)
 pch27 <- rep(pch3, times = 9)
 orders <- sort(unique(mam.dens$Order.1.2))
+labels <- paste0("<span style='color:", col27, "'>", orders, "</span>")
 
 ggplot(mam.dens, aes(x = log10BM, col = Order.1.2, shape = Order.1.2)) +
   geom_point(aes(y = log10.density.mean)) +
   theme_R() +
   xlab(expression(log[10]~Body~mass~(g))) +
   ylab(expression(log[10]~Density~(km^-2))) +
-  scale_color_manual(values = col27, breaks = orders) +
-  scale_shape_manual(values = pch27, breaks = orders) +
+  scale_color_manual(values = col27, breaks = orders, labels = labels) +
+    scale_shape_manual(values = pch27, breaks = orders, labels = labels) +
+  theme(legend.text = element_markdown()) +
   theme(legend.position = c(1, 1), 
         legend.background = element_rect(linetype = "solid", colour = "black"),
         legend.justification = c(1,1)) +
@@ -102,7 +104,7 @@ ggplot(mam.dens, aes(x = log10BM, col = Order.1.2, shape = Order.1.2)) +
 ggsave("output/appendix1_fig1.png", width = 25.6, height = 16.5, units = "cm")
 
 ggplot(mam.dens, aes(x = log10BM, col = Binomial.1.2 %in% dataset$Binomial.1.2)) +
-  geom_point(aes(y = log10.density.mean), pch = 19) +
+  geom_point(aes(y = log10.density.mean), pch = 19, cex = 1) +
   theme_R() +
   xlab(expression(log[10]~Body~mass~(g))) +
   ylab(expression(log[10]~Density~(km^-2))) +

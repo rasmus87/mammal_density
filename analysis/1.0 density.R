@@ -25,33 +25,36 @@ n.trees <- 1000
 # Number of mcmc samples per (1000 trees)
 # Run 333 for good chains for testing convergence
 # Run 3 samples for actual data is enough
-mcmc.samples <- 3
+mcmc.samples <- 333
 
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
-thin <- 75
-burnin <- thin * 10
+thin <- 100
+burnin <- 3000
 nitt <- mcmc.samples * thin + burnin
 i = 1
 mcmc.regression <- function(i) {
+  if(i == 1 & mcmc.samples == 333) {
+    set.seed(42)
+  }
   tree <- forest[[i]]
   inv.phylo <- inverseA(tree, nodes = "ALL", scale = TRUE)
   chain.1 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = pantheria, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   chain.2 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = pantheria, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   chain.3 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = pantheria, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   if(i == 1 & mcmc.samples == 333) {
