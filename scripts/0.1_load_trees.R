@@ -8,6 +8,9 @@ library(ape)
 # Load PHYLACINE 1.2.1 posterior phylogeny distribution
 forest <- read.nexus("../PHYLACINE_1.2/Data/Phylogenies/Complete_phylogeny.nex")
 
+# Load PHYLACINE 1.2.1 trait data
+mam <- read_csv("../PHYLACINE_1.2/Data/Traits/Trait_data.csv", col_types = cols())
+
 # Non terrestrials and humans
 bat.order <- "Chiroptera"
 sea.cow.order <- "Sirenia"
