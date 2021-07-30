@@ -149,7 +149,7 @@ density.dataset <- pantheria %>% bind_rows(tetra) %>%
   filter(Binomial.1.2 %in% terrestrial) %>% 
   select(-source) %>% 
   mutate(dataset = "density")
-write_csv(pantheria, "builds/imputation_dataset_PanTetra.csv")
+write_csv(density.dataset, "builds/imputation_dataset_PanTetra.csv")
 
 density.dataset <- as.data.frame(density.dataset)
 

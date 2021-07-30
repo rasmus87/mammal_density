@@ -39,19 +39,19 @@ mcmc.regression <- function(i) {
   chain.1 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   chain.2 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   chain.3 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                       family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
                       prior = prior,
-                      data = df, nitt = nitt, burnin = burnin, thin = thin,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
   if(i == 1 & mcmc.samples == 333) {
