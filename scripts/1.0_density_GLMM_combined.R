@@ -30,7 +30,7 @@ mam <- read.csv("builds/imputation_dataset_mam.csv")
 n.mam <- nrow(mam)
 
 # Combine datasets
-df <- rbind(mam, pantheria)
+df <- rbind(mam, density.dataset)
 
 # Load forest
 forest <- read_rds("builds/forest.rds")
@@ -88,9 +88,9 @@ chain.3 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
                     data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
                     pr = TRUE,
                     verbose = FALSE)
-write_rds(chain.1, paste0("builds/mcmcglmms/tree", i, "chain1", alt, ".rds"))
-write_rds(chain.2, paste0("builds/mcmcglmms/tree", i, "chain2", alt, ".rds"))
-write_rds(chain.3, paste0("builds/mcmcglmms/tree", i, "chain3", alt, ".rds"))
+write_rds(chain.1, paste0("builds/mcmcglmms/chain1", dataset, ".rds"))
+write_rds(chain.2, paste0("builds/mcmcglmms/chain2", dataset, ".rds"))
+write_rds(chain.3, paste0("builds/mcmcglmms/chain3", dataset, ".rds"))
 
 
 
