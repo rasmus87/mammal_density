@@ -42,14 +42,14 @@ forest <- read_rds("builds/forest.rds")
 
 ## Set options:
 # Set parralell cluster size
-# cluster.size <- 2
-cluster.size <- 6
+cluster.size <- 2
+# cluster.size <- 6
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
-# n.trees <- 2
+n.trees <- 2
 # n.trees <- 6
 # n.trees <- 6*10
-n.trees <- 1000
+# n.trees <- 1000
 
 # Set priors
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
@@ -60,51 +60,50 @@ burnin <- 3000
 
 # Chain test --------------------------------------------------------------
 
+# Run chain test?
+if(FALSE) {
+  # Set samples and iterations
+  # Run 333 for good chains for testing convergence
+  mcmc.samples <- 333
+  nitt <- burnin + mcmc.samples * thin
+  
+  # For being able to rerun on the same data and get the same result
+  set.seed(42)
+  
+  tree <- forest[[1]]
+  inv.phylo <- inverseA(tree, nodes = "ALL", scale = TRUE)
+  chain.1 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
+                      family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
+                      prior = prior,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
+                      pr = TRUE,
+                      verbose = FALSE)
+  chain.2 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
+                      family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
+                      prior = prior,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
+                      pr = TRUE,
+                      verbose = FALSE)
+  chain.3 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
+                      family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
+                      prior = prior,
+                      data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
+                      pr = TRUE,
+                      verbose = FALSE)
+  write_rds(chain.1, paste0("builds/mcmcglmms/chain1", dataset, ".rds"))
+  write_rds(chain.2, paste0("builds/mcmcglmms/chain2", dataset, ".rds"))
+  write_rds(chain.3, paste0("builds/mcmcglmms/chain3", dataset, ".rds"))
+}
+
+
+
+
+# Run actual chains -------------------------------------------------------
+
 # Set samples and iterations
-# Run 333 for good chains for testing convergence
-mcmc.samples <- 333
-nitt <- burnin + mcmc.samples * thin
-
-# For being able to rerun on the same data and get the same result
-set.seed(42)
-
-tree <- forest[[1]]
-inv.phylo <- inverseA(tree, nodes = "ALL", scale = TRUE)
-chain.1 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
-                    family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
-                    prior = prior,
-                    data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
-                    pr = TRUE,
-                    verbose = FALSE)
-chain.2 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
-                    family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
-                    prior = prior,
-                    data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
-                    pr = TRUE,
-                    verbose = FALSE)
-chain.3 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
-                    family = "gaussian", ginverse = list(Binomial.1.2 = inv.phylo$Ainv), 
-                    prior = prior,
-                    data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
-                    pr = TRUE,
-                    verbose = FALSE)
-write_rds(chain.1, paste0("builds/mcmcglmms/chain1", dataset, ".rds"))
-write_rds(chain.2, paste0("builds/mcmcglmms/chain2", dataset, ".rds"))
-write_rds(chain.3, paste0("builds/mcmcglmms/chain3", dataset, ".rds"))
-
-
-
-
-
-
-
-
-
-# Set samples and iterations
-# Run 1 sample per tree for 1000 trees
+# Run 1 sample per chain per tree for 1000 trees
 mcmc.samples <- 1
 nitt <- burnin + mcmc.samples * thin
-
 
 i = 1
 mcmc.regression <- function(i) {
@@ -141,9 +140,9 @@ mcmc.regression <- function(i) {
                     chain.3$Sol[, 1:2])
   solution <- as.data.frame(solution)
   random.effects <- 3:ncol(chain.1$Sol)
-  solution["random.effect"] <- c(rowMeans(chain.1$Sol[, random.effects]),
-                                 rowMeans(chain.2$Sol[, random.effects]),
-                                 rowMeans(chain.3$Sol[, random.effects]))
+  solution["random.effect"] <- c(mean(chain.1$Sol[, random.effects]),
+                                 mean(chain.2$Sol[, random.effects]),
+                                 mean(chain.3$Sol[, random.effects]))
   solution["tree"] <- i
   solution["chain"] <- as.numeric(gl(3, mcmc.samples))
   
@@ -167,8 +166,8 @@ MCMC.predict <- function(object, newdata) {
   
   post.pred <- t(apply(object$Sol, 1, function(x){(W %*% x)@x}))[, 1:n.mam]
 
-  colnames(post.pred) <- mam$Binomial.1.2
-
+  names(post.pred) <- mam$Binomial.1.2
+  
   return(post.pred)
 }
 
@@ -198,4 +197,3 @@ gc()
 
 write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
 write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
-# write_csv(as_tibble(imputed[[2]]) %>% sample_n(9000), paste0("builds/", mcmc.samples ,"_densities_post.pred.9k.sample.csv"))
