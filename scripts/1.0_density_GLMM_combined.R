@@ -55,17 +55,17 @@ n.trees <- 1000
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
 thin <- 100
-burnin <- 3000
+burnin <- 5000
 
 
 # Chain test --------------------------------------------------------------
 
 # Run chain test?
-if(FALSE) {
+if(TRUE) {
   # Set samples and iterations
   # Run 333 for good chains for testing convergence
   mcmc.samples <- 333
-  nitt <- burnin + mcmc.samples * thin
+  nitt <- burnin + (mcmc.samples - 1) * thin + 1
   
   # For being able to rerun on the same data and get the same result
   set.seed(42)
@@ -103,7 +103,7 @@ if(FALSE) {
 # Set samples and iterations
 # Run 1 sample per chain per tree for 1000 trees
 mcmc.samples <- 1
-nitt <- burnin + mcmc.samples * thin
+nitt <- burnin + (mcmc.samples - 1) * thin + 1
 
 i = 1
 mcmc.regression <- function(i) {
