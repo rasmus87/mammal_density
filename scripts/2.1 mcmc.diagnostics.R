@@ -4,19 +4,20 @@
 # Load libraries
 library(tidyverse)
 library(gridExtra)
-library(coda)
+library(coda) # For HPDinterval()
 library(MCMCglmm)
-library(ggpmisc)
+library(ggpmisc) # For stat_poly_eq()
 
-chain.1 <- readRDS(paste0("builds/mcmcglmms/chain1.rds"))
-chain.2 <- readRDS(paste0("builds/mcmcglmms/chain2.rds"))
-chain.3 <- readRDS(paste0("builds/mcmcglmms/chain3.rds"))
- 
-# chain.1 <- readRDS(paste0("builds/mcmcglmms/chain1.alt.rds"))
-# chain.2 <- readRDS(paste0("builds/mcmcglmms/chain2.alt.rds"))
-# chain.3 <- readRDS(paste0("builds/mcmcglmms/chain3.alt.rds"))
 
-### Checking 3 chains for tree 1
+chain.1 <- read_rds(paste0("builds/mcmcglmms/chain1.rds"))
+chain.2 <- read_rds(paste0("builds/mcmcglmms/chain2.rds"))
+chain.3 <- read_rds(paste0("builds/mcmcglmms/chain3.rds"))
+
+# chain.1 <- read_rds(paste0("builds/mcmcglmms/chain1.alt.rds"))
+# chain.2 <- read_rds(paste0("builds/mcmcglmms/chain2.alt.rds"))
+# chain.3 <- read_rds(paste0("builds/mcmcglmms/chain3.alt.rds"))
+
+### Checking 3 chains
 sol <- bind_rows(as.data.frame(chain.1$Sol[, 1:2]), 
                  as.data.frame(chain.2$Sol[, 1:2]), 
                  as.data.frame(chain.3$Sol[, 1:2]))

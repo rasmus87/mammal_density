@@ -11,8 +11,8 @@ library(tictoc)
 
 # Switch between PanTHERIA or alternative dataset -------------------------
 
-dataset = "" # Normal dataset
-# dataset = ".alt" # Alternative dataset
+# dataset = "" # Normal dataset
+dataset = ".alt" # Alternative dataset
 if(dataset == "") {
   # Normal PanTHERIA dataset
   # Turn pantheria into data.frame for MCMCglmm
@@ -42,14 +42,14 @@ forest <- read_rds("builds/forest.rds")
 
 ## Set options:
 # Set parralell cluster size
-cluster.size <- 2
-# cluster.size <- 6
+# cluster.size <- 2
+cluster.size <- 6
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
-n.trees <- 2
+# n.trees <- 2
 # n.trees <- 6
 # n.trees <- 6*10
-# n.trees <- 1000
+n.trees <- 1000
 
 # Set priors
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
@@ -107,7 +107,6 @@ nitt <- burnin + mcmc.samples * thin
 
 i = 1
 mcmc.regression <- function(i) {
-  set.seed(42)
   tree <- forest[[i]]
   inv.phylo <- inverseA(tree, nodes = "ALL", scale = TRUE)
   chain.1 <- MCMCglmm(log10density ~ log10BM, random = ~Binomial.1.2,
@@ -195,5 +194,5 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_tibble(imputed[[1]]), paste0("builds/", mcmc.samples ,"_densities_fit.solution.csv"))
-write_csv(as_tibble(imputed[[2]]), paste0("builds/", mcmc.samples ,"_densities_post.pred.csv"))
+write_csv(as_tibble(imputed[[1]]), paste0("builds/densities_fit.solution", dataset, ".csv"))
+write_csv(as_tibble(imputed[[2]]), paste0("builds/densities_post.pred", dataset, ".csv"))
