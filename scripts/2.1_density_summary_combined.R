@@ -1,27 +1,32 @@
+# Create density summary
+# 30/07-2021 Rasmus Ø Pedersen
+
+# Load libraries
 library(tidyverse)
 library(ggpmisc)
 library(ggtext)
 
-dataset <- read_csv("builds/imputation_dataset.csv")
-imputed <- read_csv("builds/3_densities_post.pred.csv")
+# Load dataset only based on PanTHERIA
+dataset <- read_csv("builds/imputation_dataset_PanTHERIA.csv")
+imputed <- read_csv("builds/densities_post.pred.csv")
 
-dens <- imputed %>% gather("Binomial.1.2", "log10density")
+# Load dataset based on PanTHERIA mixed with TetraDENSITY
+# dataset <- read_csv("builds/imputation_dataset_PanTHERIA_TetraDENSITY.csv")
+# imputed <- read_csv("builds/densities_post.pred.alt.csv")
 
+# Make dataset long
+dens <- imputed %>% 
+  pivot_longer(cols = everything(), 
+               names_to = "Binomial.1.2",
+               values_to = "log10density")
+
+# Load PHYLACINE 1.2.1
 mam <- read_csv("../PHYLACINE_1.2/Data/Traits/Trait_data.csv", col_types = cols())
 
-bat.order <- "Chiroptera"
-sea.cow.order <- "Sirenia"
-whale.families <- c("Balaenidae", "Balaenopteridae", "Ziphiidae", 
-                    "Neobalaenidae", "Delphinidae", "Monodontidae", 
-                    "Eschrichtiidae", "Iniidae", "Physeteridae", 
-                    "Phocoenidae", "Platanistidae")
-seal.families <- c("Otariidae", "Phocidae", "Odobenidae")
-marine.carnivores <- c("Enhydra_lutris", "Lontra_felina", "Ursus_maritimus")
+# Filter to our imputed species list
+mam <- mam %>% filter(Binomial.1.2 %in% dens$Binomial.1.2)
 
-mam <- mam %>% filter(!Order.1.2 %in% c(bat.order, sea.cow.order),
-                      !Family.1.2 %in% c(whale.families, seal.families),
-                      !Binomial.1.2 %in% marine.carnivores)
-
+# Turn imputed data.frame into a mcmc object for calculating confidence intervals
 imputed <- as.matrix(imputed)
 attr(imputed, "class") <- "mcmc"
 imputed.ci <- coda::HPDinterval(imputed)
@@ -44,9 +49,9 @@ ggplot(test, aes()) +
   geom_density(aes(log10.upper.95hpd, col = "95 % HPD")) +
   geom_density(aes(q.025, col = "95 % Quantile")) +
   geom_density(aes(q.975, col = "95 % Quantile"))
-# Basically the same thing!  
-  
+# Almost the same thing! But we keep the HPD interval
 
+# Estimate
 dens.summary <- dens %>%
   group_by(Binomial.1.2) %>% 
   summarise(log10.density.median = median(log10density),
@@ -68,18 +73,27 @@ write_csv(mam.dens, "output/Table S4 Imputed density.csv")
 # Build supplementary figures demonstrating test of the imputed result
 mam.dens <- read_csv("output/Table S4 Imputed density.csv")
 
+# Test difference to old estimates
+mam.dens.test <- left_join(mam.dens, mam.dens0, by = c("Binomial.1.2", "Order.1.2", "Family.1.2")) %>%
+  filter(Order.1.2 == "Proboscidea")
+test <- mam.dens.test[4:9] - mam.dens.test[14:19]
+test <- test %>% pivot_longer(everything(), names_to = "parameter")
+ggplot(test, aes(value, col = parameter)) +
+  geom_density()
+test %>% group_by(parameter) %>% summarise(sum(value), mean(value), median(value), sd(value))
+
 theme_R <- function() {
   theme_bw() %+replace% 
     theme(panel.border = element_blank(),
           axis.line = element_line(colour = "black"))
 }
 
-ggplot(mam.dens, aes(x = log10BM, col = Order.1.2)) +
-  geom_linerange(aes(ymin = log10.lower.95hpd, ymax = log10.upper.95hpd)) +
-  geom_point(aes(y = log10.density.mean)) +
-  theme_R() +
-  xlab(expression(log[10]~Body~mass~(g))) +
-  ylab(expression(log[10]~Density~(km^2)))
+# ggplot(mam.dens, aes(x = log10BM, col = Order.1.2)) +
+#   geom_linerange(aes(ymin = log10.lower.95hpd, ymax = log10.upper.95hpd)) +
+#   geom_point(aes(y = log10.density.mean)) +
+#   theme_R() +
+#   xlab(expression(log[10]~Body~mass~(g))) +
+#   ylab(expression(log[10]~Density~(km^2)))
 
 col9 <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f",
           "#ff7f00", "#cab2d6")
