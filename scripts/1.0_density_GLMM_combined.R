@@ -11,8 +11,8 @@ library(tictoc)
 
 # Switch between PanTHERIA or alternative dataset -------------------------
 
-# dataset = "" # Normal dataset
-dataset = ".alt" # Alternative dataset
+dataset = "" # Normal dataset
+# dataset = ".alt" # Alternative dataset
 if(dataset == "") {
   # Normal PanTHERIA dataset
   # Turn pantheria into data.frame for MCMCglmm
