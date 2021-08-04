@@ -104,3 +104,48 @@ median(lambda)
 
 posterior.mode(lambda)
 HPDinterval(lambda)
+
+
+
+# Across all data ---------------------------------------------------------
+
+
+imputed <- read_csv("builds/densities_post.pred.csv")
+
+imputed <- tibble(log10density.mean = rowMeans(imputed),
+                  tree = gl(1000, 3), 
+                  chain = as_factor(rep(1:3, 1000)))
+
+left <- ggplot(imputed, aes(x = as.numeric(tree), y = log10density.mean, col = chain)) +
+  geom_line() + 
+  geom_smooth(formula = y ~ x, method = "lm", se = TRUE, lty = "dotted", col = "black") +
+  theme_bw() +
+  theme(legend.position="none") + 
+  ylab("") + 
+  stat_poly_eq(aes(label = ..adj.rr.label..), 
+               label.x.npc = "left", label.y.npc = "top",
+               formula = y ~ x, parse = TRUE, size = 3, vstep = 0, hstep = 0.20)
+right <- ggplot(imputed, aes(x = log10density.mean, col = chain)) +
+  geom_density() +
+  geom_rug() +
+  theme_bw() +
+  theme(legend.position="none") + 
+  labs(x = "", y = "")
+p.main <- grid.arrange(left, right, nrow = 1)
+ggsave("output/appendix1_figAllTrees1Sample.png", p.main, width = 25.6, height = 14.4, units = "cm")
+
+# Checking convergence for our fixed factors
+x1 <- as.matrix(imputed %>% filter(chain == 1) %>% pull(log10density.mean))
+attr(x1, "class") <- "mcmc"
+x2 <- as.matrix(imputed %>% filter(chain == 2) %>% pull(log10density.mean))
+attr(x2, "class") <- "mcmc"
+x3 <- as.matrix(imputed %>% filter(chain == 3) %>% pull(log10density.mean))
+attr(x3, "class") <- "mcmc"
+
+gelman.diag(mcmc.list(x1, x2, x3), autoburnin = FALSE)
+
+
+### Checking effective sample size
+chain.1.2.3 <- list(x1, x2, x3)
+effectiveSize(chain.1.2.3.Sol)/3
+
