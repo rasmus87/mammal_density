@@ -43,7 +43,7 @@ right <- ggplot(sol, aes(x = value, col = chain)) +
   theme(legend.position="none") + 
   labs(x = "", y = "")
 p.main <- grid.arrange(left, right, nrow = 1)
-ggsave("output/appendix1_fig5_1.png", p.main, width = 25.6, height = 14.4, units = "cm")
+ggsave("output/appendix1_fig5.png", p.main, width = 25.6, height = 14.4, units = "cm")
 
 VCV <- bind_rows(as.data.frame(chain.1$VCV), 
                  as.data.frame(chain.2$VCV), 
@@ -70,7 +70,7 @@ right <- ggplot(VCV, aes(x = value, col = chain)) +
   theme(legend.position="none") + 
   labs(x = "", y = "")
 p.random <- grid.arrange(left, right, nrow = 1)
-ggsave("output/appendix1_fig6_1.png", p.random, width = 25.6, height = 14.4, units = "cm")
+ggsave("output/appendix1_fig6.png", p.random, width = 25.6, height = 14.4, units = "cm")
 
 # Checking convergence for our fixed factors
 gelman.diag(mcmc.list(chain.1$Sol[, 1:2], chain.2$Sol[, 1:2], chain.3$Sol[, 1:2]), autoburnin = FALSE)
