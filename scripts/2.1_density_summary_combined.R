@@ -72,16 +72,17 @@ write_csv(mam.dens, "output/Table S4 Imputed density.csv")
 
 # Build supplementary figures demonstrating test of the imputed result
 mam.dens <- read_csv("output/Table S4 Imputed density.csv")
-mam.dens0 <- read_csv("output/Table S4 Imputed density - Copy.csv")
 
-# Test difference to old estimates
-mam.dens.test <- left_join(mam.dens, mam.dens0, by = c("Binomial.1.2", "Order.1.2", "Family.1.2"))# %>%
-  #filter(Order.1.2 == "Proboscidea")
-test <- mam.dens.test[4:9] - mam.dens.test[14:19]
-test <- test %>% pivot_longer(everything(), names_to = "parameter")
-ggplot(test, aes(value, col = parameter)) +
-  geom_density()
-test %>% group_by(parameter) %>% summarise(sum(value), mean(value), median(value), sd(value))
+# mam.dens0 <- read_csv("output/Table S4 Imputed density - Old.csv")
+# 
+# # Test difference to old estimates
+# mam.dens.test <- left_join(mam.dens, mam.dens0, by = c("Binomial.1.2", "Order.1.2", "Family.1.2")) %>%
+#   filter(Order.1.2 == "Proboscidea")
+# test <- mam.dens.test[4:9] - mam.dens.test[14:19]
+# test <- test %>% pivot_longer(everything(), names_to = "parameter")
+# ggplot(test, aes(value, col = parameter)) +
+#   geom_density()
+# test %>% group_by(parameter) %>% summarise(sum(value), mean(value), median(value), sd(value))
 
 theme_R <- function() {
   theme_bw() %+replace% 
