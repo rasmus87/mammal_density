@@ -23,7 +23,7 @@ ggplot(mam.dens, aes(x = log10(10^log10BM/1000), y = log10.density.mean, col = O
         legend.justification = c(1,1)) +
   guides(col = guide_legend(nrow = 9)) +
   coord_cartesian(ylim = c(-1.5, 4.30), xlim = c(-2.7, 4))
-
+ggsave("output/appendix1_fig1_BarnoskyComparison.png", width = 25.6, height = 16.5, units = "cm")
 
 # Our results are very different than Barnosky (2008) since he does not use
 # mammals below 44 kg, and use regressions like the dotted lines for the animal
