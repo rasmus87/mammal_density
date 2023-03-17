@@ -9,21 +9,10 @@ library(doSNOW)
 library(gridExtra)
 library(tictoc)
 
-# Switch between PanTHERIA or alternative dataset -------------------------
-
-dataset = "" # Normal dataset
-# dataset = ".alt" # Alternative dataset
-if(dataset == "") {
-  # Normal PanTHERIA dataset
-  # Turn pantheria into data.frame for MCMCglmm
-  density.dataset <- read.csv("builds/imputation_dataset_PanTHERIA.csv")
+# Normal PanTHERIA dataset
+# Turn pantheria into data.frame for MCMCglmm
+density.dataset <- read.csv("builds/imputation_dataset_PanTHERIA.csv")
   
-} else {
-  # Alternative mixed dataset
-  # Turn pantheria into data.frame for MCMCglmm
-  density.dataset <- read.csv("builds/imputation_dataset_PanTHERIA_TetraDENSITY.csv")
-}
-
 # Load clean dataset of all species
 mam <- read.csv("builds/imputation_dataset_mam.csv")
 # Number of species
@@ -102,10 +91,11 @@ if(TRUE) {
 
 # Set samples and iterations
 # Run 1 sample per chain per tree for 1000 trees
-mcmc.samples <- 1
+mcmc.samples <- 3
+burnin <- burnin * 2
+thin <- thin * 2
 nitt <- burnin + (mcmc.samples - 1) * thin + 1
 
-i = 1
 mcmc.regression <- function(i) {
   tree <- forest[[i]]
   inv.phylo <- inverseA(tree, nodes = "ALL", scale = TRUE)
@@ -194,5 +184,5 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_tibble(imputed[[1]]), paste0("builds/densities_fit.solution", dataset, ".csv"))
-write_csv(as_tibble(imputed[[2]]), paste0("builds/densities_post.pred", dataset, ".csv"))
+write_csv(as_tibble(imputed[[1]]), paste0("builds/densities_fit.solution.csv"))
+write_csv(as_tibble(imputed[[2]]), paste0("builds/densities_post.pred.csv"))
