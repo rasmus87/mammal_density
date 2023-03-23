@@ -10,10 +10,6 @@ library(ggtext)
 dataset <- read_csv("builds/imputation_dataset_PanTHERIA.csv")
 imputed <- read_csv("builds/densities_post.pred.csv")
 
-# Load dataset based on PanTHERIA mixed with TetraDENSITY
-# dataset <- read_csv("builds/imputation_dataset_PanTHERIA_TetraDENSITY.csv")
-# imputed <- read_csv("builds/densities_post.pred.alt.csv")
-
 # Make dataset long
 dens <- imputed %>% 
   pivot_longer(cols = everything(), 
@@ -54,35 +50,20 @@ ggplot(test, aes()) +
 # Estimate
 dens.summary <- dens %>%
   group_by(Binomial.1.2) %>% 
-  summarise(log10.density.median = median(log10density),
-            log10.density.mean = mean(log10density),
+  summarise(log10.density.mean = mean(log10density),
             sd = sd(log10density)) %>% 
   left_join(imputed.ci, by = "Binomial.1.2")
 
 mam.dens <- mam %>% 
   transmute(Binomial.1.2, Order.1.2, Family.1.2, log10BM = log10(Mass.g)) %>% 
   left_join(dens.summary, by = "Binomial.1.2")
-mam.dens <- mam.dens %>% mutate(density.median = 10^log10.density.median,
-                                density.mean = 10^log10.density.mean,
+mam.dens <- mam.dens %>% mutate(density.geo.mean = 10^log10.density.mean,
                                 lower.95hpd = 10^log10.lower.95hpd,
                                 upper.95hpd = 10^log10.upper.95hpd)
-
-write_csv(mam.dens, "output/Table S4 Imputed density.csv")
-
 
 # Build supplementary figures demonstrating test of the imputed result
 mam.dens <- read_csv("output/Table S4 Imputed density.csv")
 
-# mam.dens0 <- read_csv("output/Table S4 Imputed density - Old.csv")
-# 
-# # Test difference to old estimates
-# mam.dens.test <- left_join(mam.dens, mam.dens0, by = c("Binomial.1.2", "Order.1.2", "Family.1.2")) %>%
-#   filter(Order.1.2 == "Proboscidea")
-# test <- mam.dens.test[4:9] - mam.dens.test[14:19]
-# test <- test %>% pivot_longer(everything(), names_to = "parameter")
-# ggplot(test, aes(value, col = parameter)) +
-#   geom_density()
-# test %>% group_by(parameter) %>% summarise(sum(value), mean(value), median(value), sd(value))
 
 theme_R <- function() {
   theme_bw() %+replace% 
@@ -139,22 +120,28 @@ full.data <- dataset %>%
   right_join(mam.dens)
 
 ggplot(full.data %>% filter(!is.na(log10.density.pantheria)), 
-       aes(x = log10.density.pantheria, y = log10.density.median, col = log10BM)) +
+       aes(x = log10.density.pantheria, y = log10.density.mean, col = log10BM)) +
   geom_point(pch = 19) +
   geom_abline(slope = 1, lty = 2, lwd = .7) +
   geom_smooth(formula = y ~ x, method = lm, se = F, lty = 1, col = "black", lwd = .9) +
   theme_R() +
   xlab(expression(log[10]~PanTHERIA~empirical~density~(km^-2))) +
-  ylab(expression(log[10]~Imputed~median~density~(km^-2))) +
+  ylab(expression(log[10]~Imputed~mean~density~(km^-2))) +
   scale_color_continuous(expression(log[10]~Body~mass~(g))) +
   coord_equal(xlim = c(-2, 5), ylim = c(-2, 5)) + 
-  stat_poly_eq(aes(label = paste(..eq.label.., ..adj.rr.label.., ..p.value.label.., sep = "*\' ,  \'*")), 
+  stat_poly_eq(aes(label = paste(..eq.label.., ..adj.rr.label.., ..p.value.label.., sep = "*\' ,  \'*"), col = NULL), 
                label.x.npc = "left", label.y.npc = "top",
                formula = y ~ x, parse = TRUE, size = 3)
 ggsave("output/appendix1_fig3.png", width = 25.6, height = 14.4, units = "cm")
 
-ggplot(full.data %>% filter(!is.na(log10.density.pantheria)), 
-       aes(x = log10BM, y = log10.density.median - log10.density.pantheria, 
+# We remove one random data-point to get the calculations running - doesn't affect the equation results
+full.data.panth.diff <- full.data %>%
+  filter(!is.na(log10.density.pantheria)) %>% 
+  mutate(dens.diff = log10.density.mean - log10.density.pantheria)
+
+# (Some random problem in confintr::ci_f_ncp with too low sample estimate)
+ggplot(full.data.panth.diff, 
+       aes(x = log10BM, y = dens.diff,
            col = Order.1.2, shape = Order.1.2)) +
   geom_point() +
   geom_abline(slope = 0, lty = 2, lwd = .7) +
@@ -164,10 +151,12 @@ ggplot(full.data %>% filter(!is.na(log10.density.pantheria)),
   ylab(expression(log[10]~Density~difference~(km^-2))) +
   scale_color_manual(values = col27, breaks = orders) +
   scale_shape_manual(values = pch27, breaks = orders) +
-  stat_poly_eq(aes(label = paste(..eq.label.., ..adj.rr.label.., ..p.value.label.., sep = "*\' ,  \'*"),
-                   col = NULL, shape = NULL), 
-               label.x.npc = "left", label.y.npc = "top",
-               formula = y ~ x, parse = TRUE, size = 3) +
-  guides(col = guide_legend(ncol = 1))
+  guides(col = guide_legend(ncol = 1)) +
+  # stat_poly_eq(aes(label = paste(..eq.label.., ..adj.rr.label.., ..p.value.label.., sep = "*\' ,  \'*"),
+  #                  col = NULL, shape = NULL),
+  #              label.x.npc = "left", label.y.npc = "top",
+  #              formula = y ~ x, parse = TRUE, size = 3, method = "glm") +
+  annotate("text", x = min(full.data.panth.diff$log10BM), y = max(full.data.panth.diff$dens.diff), 
+           label = paste0("Pearson's r = ", signif(cor(full.data.panth.diff$log10BM, full.data.panth.diff$dens.diff), 2)), 
+           vjust = "inward", hjust = "inward")
 ggsave("output/appendix1_fig4.png", width = 25.6, height = 14.4, units = "cm")
-
