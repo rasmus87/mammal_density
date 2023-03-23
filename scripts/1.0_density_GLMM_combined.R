@@ -32,7 +32,7 @@ forest <- read_rds("builds/forest.rds")
 ## Set options:
 # Set parralell cluster size
 # cluster.size <- 2
-cluster.size <- 6
+cluster.size <- 30
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
 # n.trees <- 2
@@ -44,7 +44,7 @@ n.trees <- 1000
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
               R = list(V = 1, nu = 0.02))
 thin <- 100
-burnin <- 5000
+burnin <- 5000 * 2
 
 
 # Chain test --------------------------------------------------------------
@@ -52,8 +52,8 @@ burnin <- 5000
 # Run chain test?
 if(TRUE) {
   # Set samples and iterations
-  # Run 333 for good chains for testing convergence
-  mcmc.samples <- 333
+  # Run 1000 for good chains for testing convergence
+  mcmc.samples <- 1000
   nitt <- burnin + (mcmc.samples - 1) * thin + 1
   
   # For being able to rerun on the same data and get the same result
@@ -79,9 +79,13 @@ if(TRUE) {
                       data = density.dataset, nitt = nitt, burnin = burnin, thin = thin,
                       pr = TRUE,
                       verbose = FALSE)
-  write_rds(chain.1, paste0("builds/mcmcglmms/chain1", dataset, ".rds"))
-  write_rds(chain.2, paste0("builds/mcmcglmms/chain2", dataset, ".rds"))
-  write_rds(chain.3, paste0("builds/mcmcglmms/chain3", dataset, ".rds"))
+  write_rds(chain.1, paste0("builds/mcmcglmms/chain1", ".rds"))
+  write_rds(chain.2, paste0("builds/mcmcglmms/chain2", ".rds"))
+  write_rds(chain.3, paste0("builds/mcmcglmms/chain3", ".rds"))
+  
+  # Clean
+  rm(chain.1, chain.2, chain.3)
+  gc()
 }
 
 
@@ -91,9 +95,7 @@ if(TRUE) {
 
 # Set samples and iterations
 # Run 1 sample per chain per tree for 1000 trees
-mcmc.samples <- 3
-burnin <- burnin * 2
-thin <- thin * 2
+mcmc.samples <- 1
 nitt <- burnin + (mcmc.samples - 1) * thin + 1
 
 mcmc.regression <- function(i) {
