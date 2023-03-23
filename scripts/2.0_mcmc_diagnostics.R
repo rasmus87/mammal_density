@@ -8,6 +8,7 @@ library(coda) # For HPDinterval()
 library(MCMCglmm)
 library(ggpmisc) # For stat_poly_eq()
 
+n.samples <- 1000
 
 chain.1 <- read_rds(paste0("builds/mcmcglmms/chain1.rds"))
 chain.2 <- read_rds(paste0("builds/mcmcglmms/chain2.rds"))
@@ -21,8 +22,8 @@ chain.3 <- read_rds(paste0("builds/mcmcglmms/chain3.rds"))
 sol <- bind_rows(as.data.frame(chain.1$Sol[, 1:2]), 
                  as.data.frame(chain.2$Sol[, 1:2]), 
                  as.data.frame(chain.3$Sol[, 1:2]))
-sol["chain"] <- gl(3, 333)
-sol["sample"] <- rep(1:333, 3)
+sol["chain"] <- gl(3, n.samples)
+sol["sample"] <- rep(1:n.samples, 3)
 sol <- gather(sol, key = "variable", value = "value", -chain, -sample)
 
 left <- ggplot(sol, aes(x = sample, y = value, col = chain)) +
@@ -48,8 +49,8 @@ ggsave("output/appendix1_fig5.png", p.main, width = 25.6, height = 14.4, units =
 VCV <- bind_rows(as.data.frame(chain.1$VCV), 
                  as.data.frame(chain.2$VCV), 
                  as.data.frame(chain.3$VCV))
-VCV["chain"] <- gl(3, 333)
-VCV["sample"] <- rep(1:333, 3)
+VCV["chain"] <- gl(3, n.samples)
+VCV["sample"] <- rep(1:n.samples, 3)
 VCV <- gather(VCV, key = "variable", value = "value", -chain, -sample)
 
 left <- ggplot(VCV, aes(x = sample, y = value, col = chain)) +
