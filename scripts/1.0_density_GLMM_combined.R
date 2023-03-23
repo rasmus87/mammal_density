@@ -50,7 +50,7 @@ burnin <- 5000 * 2
 # Chain test --------------------------------------------------------------
 
 # Run chain test?
-if(TRUE) {
+if(FALSE) {
   # Set samples and iterations
   # Run 1000 for good chains for testing convergence
   mcmc.samples <- 1000

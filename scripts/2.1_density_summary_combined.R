@@ -61,10 +61,9 @@ mam.dens <- mam.dens %>% mutate(density.geo.mean = 10^log10.density.mean,
                                 lower.95hpd = 10^log10.lower.95hpd,
                                 upper.95hpd = 10^log10.upper.95hpd)
 
+write_csv(mam.dens, "output/Table S4 Imputed density.csv")
+
 # Build supplementary figures demonstrating test of the imputed result
-mam.dens <- read_csv("output/Table S4 Imputed density.csv")
-
-
 theme_R <- function() {
   theme_bw() %+replace% 
     theme(panel.border = element_blank(),
@@ -138,6 +137,12 @@ ggsave("output/appendix1_fig3.png", width = 25.6, height = 14.4, units = "cm")
 full.data.panth.diff <- full.data %>%
   filter(!is.na(log10.density.pantheria)) %>% 
   mutate(dens.diff = log10.density.mean - log10.density.pantheria)
+
+# Persons R-squared
+cor(full.data.panth.diff$log10.density.mean, full.data.panth.diff$log10.density.pantheria)^2
+
+# RMSE
+rmse <- sqrt(mean((full.data.panth.diff$log10.density.pantheria - full.data.panth.diff$log10.density.mean)^2))
 
 # (Some random problem in confintr::ci_f_ncp with too low sample estimate)
 ggplot(full.data.panth.diff, 
