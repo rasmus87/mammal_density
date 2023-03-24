@@ -37,14 +37,14 @@ forest <- read_rds("builds/forest.rds")
 
 ## Set options:
 # Set parralell cluster size
-cluster.size <- 2
-# cluster.size <- 30
+# cluster.size <- 2
+cluster.size <- 30
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
 n.trees <- 2
 # n.trees <- 6
 # n.trees <- 6*10
-# n.trees <- 1000
+n.trees <- 1000
 
 # Set priors
 prior <- list(G = list(G1 = list(V = 1, nu = 0.02)), 
