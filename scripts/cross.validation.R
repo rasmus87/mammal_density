@@ -22,7 +22,7 @@ n.mam <- nrow(mam)
 # Set seed and make a random ordered data vector
 set.seed(42)
 n <- nrow(density.dataset)
-data.seq.random <- sample(1:n)
+density.dataset <- density.dataset[sample(n), ]
 
 # Create 10 equally size folds
 folds <- cut(1:n, breaks = 5, labels = FALSE)
