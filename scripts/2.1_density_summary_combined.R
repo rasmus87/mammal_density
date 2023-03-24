@@ -51,6 +51,7 @@ ggplot(test, aes()) +
 dens.summary <- dens %>%
   group_by(Binomial.1.2) %>% 
   summarise(log10.density.mean = mean(log10density),
+            density.mean = mean(10^log10density),
             sd = sd(log10density)) %>% 
   left_join(imputed.ci, by = "Binomial.1.2")
 
@@ -60,8 +61,9 @@ mam.dens <- mam %>%
 mam.dens <- mam.dens %>% mutate(density.geo.mean = 10^log10.density.mean,
                                 lower.95hpd = 10^log10.lower.95hpd,
                                 upper.95hpd = 10^log10.upper.95hpd)
-
-write_csv(mam.dens, "output/Table S4 Imputed density.csv")
+mam.dens <- mam.dens %>% 
+  relocate(density.mean, .after = density.geo.mean)
+write_csv(mam.dens, "output/Table S2 Imputed density.csv")
 
 # Build supplementary figures demonstrating test of the imputed result
 theme_R <- function() {
