@@ -154,10 +154,28 @@ gc()
 total.res <- res %>% 
   left_join(density.dataset %>% transmute(Binomial.1.2, log10.density.pantheria = log10density))
 
-# Persons R-squared
-cor(total.res$log10.density.mean, total.res$log10.density.pantheria)^2
 
-# RMSE
-rmse <- sqrt(mean((total.res$log10.density.pantheria - total.res$log10.density.mean)^2))
+write_csv(total.res, "builds/densities_5xcross_val.csv")
+total.res <- read_csv("builds/densities_5xcross_val.csv")
 
-write_csv(total.res, paste0("builds/densities_5xcross_val.csv"))
+# Persons R-squared and RMSE
+total.res %>% 
+  group_by(fold) %>% 
+  summarise(persons.r2 = cor(log10.density.mean, log10.density.pantheria)^2,
+            rmse = sqrt(mean((log10.density.pantheria - log10.density.mean)^2))) %>% 
+  summarise_at(c("persons.r2", "rmse"), mean)
+
+total.res %>% 
+  group_by(fold) %>% 
+  summarise(persons.r2 = cor(10^log10.density.mean, 10^log10.density.pantheria)^2,
+            rmse = sqrt(mean((10^log10.density.pantheria - 10^log10.density.mean)^2))) %>% 
+  summarise_at(c("persons.r2", "rmse"), mean)
+
+# total.res <- total.res %>% 
+#   mutate(error = abs(log10.density.pantheria - log10.density.mean)^2,
+#          error10 = abs(10^log10.density.pantheria - 10^log10.density.mean)^2)
+# ggplot(total.res, aes(log10.density.mean, log10.density.pantheria, col = error10)) +
+#   geom_point() +
+#   geom_smooth() +
+#   geom_abline(slope = 1) +
+#   scale_color_viridis_c()

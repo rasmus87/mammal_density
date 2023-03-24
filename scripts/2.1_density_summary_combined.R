@@ -138,11 +138,11 @@ full.data.panth.diff <- full.data %>%
   filter(!is.na(log10.density.pantheria)) %>% 
   mutate(dens.diff = log10.density.mean - log10.density.pantheria)
 
-# Persons R-squared
-cor(full.data.panth.diff$log10.density.mean, full.data.panth.diff$log10.density.pantheria)^2
-
-# RMSE
-rmse <- sqrt(mean((full.data.panth.diff$log10.density.pantheria - full.data.panth.diff$log10.density.mean)^2))
+# Persons R-squared and RMSE
+full.data.panth.diff %>% 
+  summarise(persons.r2 = cor(log10.density.mean, log10.density.pantheria)^2,
+            rmse = sqrt(mean((log10.density.pantheria - log10.density.mean)^2))) %>% 
+  summarise_at(c("persons.r2", "rmse"), mean)
 
 # (Some random problem in confintr::ci_f_ncp with too low sample estimate)
 ggplot(full.data.panth.diff, 
