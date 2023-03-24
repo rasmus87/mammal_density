@@ -41,7 +41,7 @@ forest <- read_rds("builds/forest.rds")
 cluster.size <- 30
 # cluster.size <- 20
 # How many trees do you want to run this for? 2-1000?
-n.trees <- 2
+# n.trees <- 2
 # n.trees <- 6
 # n.trees <- 6*10
 n.trees <- 1000
@@ -123,6 +123,7 @@ tic()
 # Perform 5 fold cross validation
 res <- tibble()
 for(fold in 1:5) {
+  print(paste0("Cross-validation", fold, "/5"))
   #Segement your data by fold using the which() function 
   testIndexes <- which(folds == fold)
 
