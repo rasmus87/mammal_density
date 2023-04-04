@@ -186,5 +186,10 @@ toc()
 stopCluster(cl)
 gc()
 
+# Reduced decimals to 4 reduces file size a lot and 
+# only changes back transformed results -+ 0.01 %
+range((10^imputed[[2]] - 10^round(imputed[[2]], 4))/10^imputed[[2]] * 100)
+# [1] -0.01151359  0.01151226
+
 write_csv(as_tibble(imputed[[1]]), "builds/densities_fit.solution.csv")
 write_csv(as_tibble(round(imputed[[2]], 4)), "builds/densities_post.pred.csv")
