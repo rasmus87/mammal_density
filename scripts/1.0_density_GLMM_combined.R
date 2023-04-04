@@ -186,5 +186,5 @@ toc()
 stopCluster(cl)
 gc()
 
-write_csv(as_tibble(imputed[[1]]), paste0("builds/densities_fit.solution.csv"))
-write_csv(as_tibble(imputed[[2]]), paste0("builds/densities_post.pred.csv"))
+write_csv(as_tibble(imputed[[1]]), "builds/densities_fit.solution.csv")
+write_csv(as_tibble(round(imputed[[2]], 4)), "builds/densities_post.pred.csv")
